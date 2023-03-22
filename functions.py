@@ -1,4 +1,5 @@
 import csv
+import math
 
 
 def read_data(filename):
@@ -52,13 +53,46 @@ def reduce(diccionario, atributo):
     valores = []
     for valor in diccionario.items():
         if atributo in valor:
-            valores.append(valor[atributo])
+           valores.append(valor[atributo])
     return valores
 
+
+def silhouette(lista):
+
+    coeficientes = []
+
+    for i in range(len(lista)):
+
+        # Distancia media a(i) entre i y el resto de valores de la lista
+        a_i = sum([math.sqrt(sum([(lista[i][j]-lista[k][j])**2 for j in range(len(lista[i]))])) for k in range(len(lista)) if k != i]) / (len(lista)-1) # ufff...
+
+        # Agrupar los elementos de la lista en función de su clase
+        grupos = {}
+
+        for k in range(len(lista)):
+            if k != i:
+                clase = lista[k][-1]
+                if clase not in grupos:
+                    grupos[clase] = []
+                grupos[clase].append(lista[k])
+
+        # Distancia media b(i) entre i y todos los elementos de la lista que no están en la misma clase que i
+        b_i = min([sum([math.sqrt(sum([(lista[i][j]-x[j])**2 for j in range(len(lista[i])-1)])) for x in grupos[clase]])/len(grupos[clase]) for clase in grupos]) # madre...
+
+        # Coeficiente S(i)
+        s_i = (b_i - a_i) / max(a_i, b_i)
+        coeficientes.append(s_i)
+
+    # Coeficiente de Silhouette de la lista
+    silhoutte_coef = sum(coeficientes) / len(coeficientes)
+
+    return silhoutte_coef
 
 
 dict = read_data("winequality.csv")
 dic_red, dic_white = split(dict)
 dict_reduce = reduce(dic_red, "volatile acidity")
+res = silhouette([1, 5, 8, 2])
 
-print(dict_reduce)
+print(res)
+
