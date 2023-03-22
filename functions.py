@@ -34,3 +34,15 @@ def split(dic_muestras):
     dic_white = {i:dic_muestras[i] for i in dic_muestras if dic_muestras[i]['type'] == "white"}
 
     return [dic_red.pop, dic_white]
+
+
+def reduce(diccionario, atributo):
+    """
+    Esta función recibe un diccionario y el nombre de un atributo,
+    y devuelve una lista con los valores de dicho atributo en el diccionario.
+    """
+    valores = []
+    for valor in diccionario.items():
+        if atributo in valor:
+            valores.append(valor[atributo])
+    return valores
