@@ -5,6 +5,7 @@ import math
 def read_data(filename):
 
     dic_datos = {}
+    dead = 0
 
     with open(filename, newline='') as csvfile:
 
@@ -33,7 +34,12 @@ def read_data(filename):
                 },})
 
                 count += 1
+            else: 
+                dead += 1
 
+        if dead >= 50:
+            raise ValueError("Maracatón")
+        
     return dic_datos
 
 def split(dic_muestras):
@@ -49,6 +55,7 @@ def reduce(diccionario, atributo):
     Esta función recibe un diccionario y el nombre de un atributo,
     y devuelve una lista con los valores de dicho atributo en el diccionario.
     """
+    keys = diccionario.keys()
 
     valores = []
     for valor in diccionario.items():
