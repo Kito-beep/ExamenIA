@@ -1,44 +1,37 @@
 import csv
 
 
-def read_data(nombre_fichero):
-
-    """
-    Esta función recibe el nombre de un fichero csv con muestras de vino,
-    y devuelve un diccionario con los datos de las muestras.
-    """
+def read_data(filename):
 
     dic_datos = {}
-    dato_num = 0
 
-    with open(nombre_fichero, newline='') as csvfile:
+    with open(filename, newline='') as csvfile:
 
-        reader = csv.reader(csvfile, delimiter=';')
-        next(reader) # Se salta la primera fila con los nombres de las columnas
+        reader = csv.DictReader(csvfile)
+        count = 1
 
         for row in reader:
 
-            dato_num += 1
-            datos = {}
-            pala = {}
+            if all(row.values()):
 
-            if '' not in row:
+                dic_datos.update({"dato"+str(count):
+                {
+                    "type": row["type"],
+                    "fixed acidity": row["fixed acidity"],
+                    "volatile acidity": row["volatile acidity"],
+                    "citric acid": row["citric acid"],
+                    "residual sugar": row["residual sugar"],
+                    "chlorides": row["chlorides"],
+                    "free sulfur dioxide": row["free sulfur dioxide"],
+                    "total sulfur dioxide": row["total sulfur dioxide"],
+                    "density": row["density"],
+                    "pH": row["pH"],
+                    "sulphates": row["sulphates"],
+                    "alcohol": row["alcohol"],
+                    "quality": row["quality"]
+                },})
 
-                datos['type'] = pala[0]
-                datos['fixed acidity'] = float(pala[1])
-                datos['volatile acidity'] = float(pala[2])
-                datos['citric acid'] = float(pala[3])
-                datos['residual sugar'] = float(pala[4])
-                datos['chlorides'] = float(pala[5])
-                datos['free sulfur dioxide'] = float(pala[6])
-                datos['total sulfur dioxide'] = float(pala[7])
-                datos['density'] = float(pala[8])
-                datos['pH'] = float(pala[9])
-                datos['sulphates'] = float(pala[10])
-                datos['alcohol'] = float(pala[11])
-                datos['quality'] = int(pala[12])
-
-                dic_datos['dato{}'.format(dato_num)] = datos
+                count += 1
 
     return dic_datos
 
@@ -47,7 +40,7 @@ def split(dic_muestras):
     dic_red = {i:dic_muestras[i] for i in dic_muestras if dic_muestras[i]['type'] == "red"}
     dic_white = {i:dic_muestras[i] for i in dic_muestras if dic_muestras[i]['type'] == "white"}
 
-    return [dic_red.pop, dic_white]
+    return [dic_red, dic_white]
 
 def reduce(diccionario, atributo):
 
@@ -65,4 +58,7 @@ def reduce(diccionario, atributo):
 
 
 dict = read_data("winequality.csv")
-print(dict)
+dic_red, dic_white = split(dict)
+dict_reduce = reduce(dic_red, "volatile acidity")
+
+print(dict_reduce)
